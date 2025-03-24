@@ -1,33 +1,51 @@
 package com.mycompany.gestionrh;
 
-import java.util.Date;
-import java.util.Scanner;
-import java.text.SimpleDateFormat;
-
 public class GestionRH {
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-        Departamento deptoTI = new Departamento(1, "Tecnologia");
-        EmpleadoPermanente emp1 = new EmpleadoPermanente(101, "Juan", "Perez", new Date(), 250000, "Seguro medico", 5, 500000);
-        EmpleadoTemporal emp2 = new EmpleadoTemporal(102, "Maria", "Gomez", new Date(), 180000, 160, 180000);
+        Departamento d1 = Departamento.crearDepartamento(1, "Desarrollo");
+        Departamento d2 = Departamento.crearDepartamento(2, "Recursos Humanos");
 
-        emp1.asignarDepartamento(deptoTI);
-        emp2.asignarDepartamento(deptoTI);
-        deptoTI.listarEmpleados();
+        Empleado e1 = Empleado.crearEmpleado(1, "Juan", "Perez", "23-03-2021", 300000.0, 1, "Seguro todo riesgo, vacaciones", 1, 500000.0);
+        Empleado e2 = Empleado.crearEmpleado(2, "Maria", "Gomez", "20-10-2025", 200000.0, 2, "20-11-2025", 120, true, 150000.0);
+        Empleado e3 = Empleado.crearEmpleado(3, "Isabel", "Perez Araujo", "11-02-2018", 300000.0, 1, "Seguro todo riesgo, vacaciones", 7, 500000.0);
 
-        System.out.print("Ingrese la fecha del reporte (dd/MM/yyyy): ");
-        String fechaStr = scanner.nextLine();
-        Date fechaReporte = null;
-        try {
-            fechaReporte = dateFormat.parse(fechaStr);
-        } catch (Exception e) {
-            System.out.println("Fecha invalida, se usará la fecha actual.");
-            fechaReporte = new Date();
+        d1.agregarEmpleado(e1);
+        d1.agregarEmpleado(e3);
+        d2.agregarEmpleado(e2);
+
+        System.out.println("\n--- Departamentos ---");
+        for (Departamento d : Departamento.listarDepartamentos()) {
+            System.out.println(d);
+            System.out.println("Empleados en " + d.getNombre() + ":");
+            for (Empleado e : d.listarEmpleados()) {
+                System.out.println(e);
+            }
         }
 
-        ReporteDesempenio reporte1 = new ReporteDesempenio(1, emp1, "Eficiencia alta", fechaReporte);
-        reporte1.generarReporte();
+        e1.actualizarEmpleado("Juan Carlos", "Pérez López", 350000.0);
+
+        d1.reasignarEmpleado(e1, d2);
+
+        ReporteDesempenio r1 = new ReporteDesempenio(1, e1, e1.getDepartamento(), "Productividad", "Excelente desempeño");
+        ReporteDesempenio r2 = ReporteDesempenio.generarReporteDepartamental(2, d1, "Eficiencia", "Buen rendimiento general");
+
+        System.out.println("\n--- Reportes ---");
+        for (ReporteDesempenio r : ReporteDesempenio.listarReportes()) {
+            r.visualizar();
+        }
+
+        e2.eliminarEmpleado();
+        d1.eliminarDepartamento();
+
+        System.out.println("\n--- Departamentos despues de eliminación ---");
+        for (Departamento d : Departamento.listarDepartamentos()) {
+            System.out.println(d);
+            System.out.println("Empleados en " + d.getNombre() + ":");
+            for (Empleado e : d.listarEmpleados()) {
+                System.out.println(e);
+            }
+        }
     }
 }
